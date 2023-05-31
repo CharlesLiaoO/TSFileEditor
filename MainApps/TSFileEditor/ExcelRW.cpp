@@ -1,6 +1,7 @@
 ﻿#include "ExcelRW.h"
 #include <QRegExpValidator>
 #include <QFileInfo>
+#include <QDebug>
 
 ExcelRW::ExcelRW(int keyColumn, int sourceColumn, int transColumn, QObject *parent) : QObject(parent)
 {
@@ -57,6 +58,8 @@ bool ExcelRW::ImportFromXlsx(QList<TranslateModel> &list, QString strPath)
             }else
             {
                 strSource = m_pDoc->cellAt(i, m_SourceColumn)->value().toString();
+//                qDebug()<< "numberFormat"<< m_pDoc->cellAt(i, m_SourceColumn)->format().numberFormat();
+//                qDebug()<< "numberFormatIndex"<< m_pDoc->cellAt(i, m_SourceColumn)->format().numberFormatIndex();
             }
 
             if(m_pDoc->cellAt(i, m_TransColumn) == nullptr)
@@ -112,7 +115,15 @@ bool ExcelRW::ExportToXlsx(QList<TranslateModel>& list, QString strPath)
     xlsx.write(1, m_KeyColumn, QVariant(strHeaderkey));
     xlsx.write(1, m_SourceColumn, QVariant(strHeaderSource));
     xlsx.write(1, m_TransColumn, QVariant(strHeaderTranslate));
+    QXlsx::Format fmH;
+    fmH.setFontBold(true);
+    xlsx.setRowFormat(1, fmH);
 
+    QXlsx::Format fmC;
+    fmC.setTextWarp(true);
+//    fmC.setNumberFormat("Text");  //变成了自定义格式
+    fmC.setNumberFormatIndex(49);  // text
+//    fmC.setFontName("Arial Unicode MS");
     for(int i=0; i < list.count(); i++)
     {
         for(int j=1; j<=3; j++){
@@ -120,6 +131,9 @@ bool ExcelRW::ExportToXlsx(QList<TranslateModel>& list, QString strPath)
 //            xlsx.write(i+2, m_SourceColumn, QVariant(list[i].GetSource(true)));
             xlsx.write(i+2, m_SourceColumn, QVariant(list[i].GetComment()));
             xlsx.write(i+2, m_TransColumn, QVariant(list[i].GetTranslate(true)));
+
+            xlsx.setRowFormat(i+2, fmC);
+            xlsx.setRowHeight(i+2, 20);
         }
     }
 
