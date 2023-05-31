@@ -1,8 +1,9 @@
-#ifndef MAINWINDOW_H
+﻿#ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
 #include <QMainWindow>
 #include <QList>
+#include <QMap>
 
 #include "DataModel/TranslateModel.h"
 

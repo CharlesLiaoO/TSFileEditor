@@ -1,4 +1,4 @@
-#include "MainWindow.h"
+﻿#include "MainWindow.h"
 #include "ui_MainWindow.h"
 #include "XmlRW.h"
 #include "ExcelRW.h"
@@ -46,10 +46,17 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+QString LineEditBrowsePath(QLineEdit *edit)
+{
+    QString path = edit->text();
+    if (path.isEmpty())
+        path = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation);
+    return path;
+}
+
 void MainWindow::on_tsLookBtn_clicked()
 {
-    const QString documentLocation = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation);
-    QString fileName = QFileDialog::getOpenFileName(this, tr("select .ts file"), documentLocation, "Files (*.ts)");
+    QString fileName = QFileDialog::getOpenFileName(this, tr("select .ts file"), LineEditBrowsePath(ui->tsPathEdit), "Files (*.ts)");
 
     if(fileName.isEmpty()){
         return;
@@ -61,8 +68,7 @@ void MainWindow::on_tsLookBtn_clicked()
 
 void MainWindow::on_excelLookBtn_clicked()
 {
-    const QString documentLocation = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation);
-    QString fileName = QFileDialog::getOpenFileName(this, tr("select excel file"), documentLocation, "Files (*.xlsx)");
+    QString fileName = QFileDialog::getOpenFileName(this, tr("select excel file"), LineEditBrowsePath(ui->excelPathEdit), "Files (*.xlsx)");
 
     if(fileName.isEmpty()){
         return;
@@ -216,13 +222,15 @@ void MainWindow::on_tsImportBtn_clicked()
 
 void MainWindow::onReceiveMsg(const QString &msg)
 {
-    ui->statusBar->showMessage(msg);
+//    static QTimer tmrMsgClr;
+//    tmrMsgClr.start(3000);
+    ui->statusBar->showMessage(msg, 3000);
+//    connect(&tmrMsgClr, &QTimer::timeout, ui->statusBar, &QStatusBar::clearMessage);
 }
 
 void MainWindow::on_tsDirLookBtn_clicked()
 {
-    const QString documentLocation = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation);
-    QString dirName = QFileDialog::getExistingDirectory(this, tr("select .ts dir"), documentLocation);
+    QString dirName = QFileDialog::getExistingDirectory(this, tr("select .ts dir"), LineEditBrowsePath(ui->tsDirEdit));
 
     if(dirName.isEmpty()){
         return;
@@ -233,8 +241,7 @@ void MainWindow::on_tsDirLookBtn_clicked()
 
 void MainWindow::on_excelDirBtn_clicked()
 {
-    const QString documentLocation = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation);
-    QString fileName = QFileDialog::getOpenFileName(this, tr("select excel file"), documentLocation, "Files (*.xlsx)");
+    QString fileName = QFileDialog::getOpenFileName(this, tr("select excel file"), LineEditBrowsePath(ui->excelDirEdit), "Files (*.xlsx)");
 
     if(fileName.isEmpty()){
         return;
