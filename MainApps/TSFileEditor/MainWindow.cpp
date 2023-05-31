@@ -17,7 +17,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     m_toLanguage = "en";
     m_pXmlWorker = new XmlRW(this);
-    m_pExcelWorker = new ExcelRW(1, 2, 3, this);
+    m_pExcelWorker = new ExcelRW(2, 1, 3, this);
     m_pTranslateWorker = new TranslateWorker(m_transList, this);
 
     ui->youdaoTipLabel->setVisible(false);
