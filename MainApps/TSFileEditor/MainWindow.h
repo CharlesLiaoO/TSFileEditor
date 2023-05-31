@@ -32,7 +32,7 @@ private slots:
     void on_tsImportBtn_clicked();
 
     void onComboBoxChanged(int);
-    void onReceiveMsg(const QString& msg);
+    void onReceiveMsg(const QString& msg, bool err=false);
 
     void on_tsDirLookBtn_clicked();
     void on_excelDirBtn_clicked();

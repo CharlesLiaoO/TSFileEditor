@@ -14,6 +14,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    ui->statusBar->setStyleSheet("color:black");  //qt5.12.12默认为红色，这里改为黑色
 
     m_toLanguage = "en";
     m_pXmlWorker = new XmlRW(this);
@@ -33,8 +34,12 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->comboBox->addItem("其他", "other");
 
     connect(ui->comboBox, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &MainWindow::onComboBoxChanged);
-    connect(m_pExcelWorker, &ExcelRW::error, this, &MainWindow::onReceiveMsg);
-    connect(m_pTranslateWorker, &TranslateWorker::error, this, &MainWindow::onReceiveMsg);
+    connect(m_pExcelWorker, &ExcelRW::error, this, [this](const QString &msg){
+        onReceiveMsg(msg, true);
+    });
+    connect(m_pTranslateWorker, &TranslateWorker::error, this, [this](const QString &msg){
+        onReceiveMsg(msg, true);
+    });
 
     readConfig();
 }
@@ -76,7 +81,7 @@ void MainWindow::on_excelLookBtn_clicked()
     else{
         QFileInfo info(fileName);
         if ("xlsx" != info.suffix()){
-            onReceiveMsg("File type is not supported");
+            onReceiveMsg("File type is not supported", true);
             return;
         }
     }
@@ -107,10 +112,10 @@ void MainWindow::on_generateBtn_clicked()
 
     re = m_pExcelWorker->ExportToXlsx(m_transList, ui->excelPathEdit->text());
     if(re) {
-        onReceiveMsg("export excel file success");
+        onReceiveMsg("Export excel file success");
         ui->youdaoTipLabel->setVisible(false);
     } else {
-        onReceiveMsg("export excel file failed");
+        onReceiveMsg("Export excel file failed", true);
     }
 }
 
@@ -127,10 +132,10 @@ void MainWindow::on_tsUpdateBtn_clicked()
 
     re = m_pExcelWorker->ImportFromXlsx(m_transList, ui->excelPathEdit->text());
     if(re) {
-        onReceiveMsg("import excel file success");
+        onReceiveMsg("Import excel file success");
         ui->youdaoTipLabel->setVisible(false);
     } else {
-        onReceiveMsg("import excel file failed");
+        onReceiveMsg("Import excel file failed", true);
     }
 
     //update ts file
@@ -141,9 +146,9 @@ void MainWindow::on_tsUpdateBtn_clicked()
     re = m_pXmlWorker->ExportToTS(m_transList, ui->tsPathEdit->text());
 
     if(re) {
-        onReceiveMsg("update .ts file success");
+        onReceiveMsg("Update .ts file success");
     } else {
-        onReceiveMsg("update .ts file failed");
+        onReceiveMsg("Update .ts file failed", true);
     }
 
 }
@@ -161,10 +166,10 @@ void MainWindow::on_translateBtn_clicked()
 
     re = m_pExcelWorker->ImportFromXlsx(m_transList, ui->excelPathEdit->text());
     if(re) {
-        onReceiveMsg("import excel file success");
+        onReceiveMsg("Import excel file success");
     }
     else {
-        onReceiveMsg("import excel file failed");
+        onReceiveMsg("Import excel file failed", true);
     }
 
 //    m_pTranslateWorker->YoudaoTranslate("你好", "auto", m_toLanguage);
@@ -173,11 +178,11 @@ void MainWindow::on_translateBtn_clicked()
     m_pTranslateWorker->SetIdKey(ui->youdaoAppIdlineEdit->text(), ui->youdaoKeylineEdit->text());
     re = m_pTranslateWorker->YoudaoTranslate("auto", m_toLanguage);
     if(re) {
-        onReceiveMsg("translate excel file success");
+        onReceiveMsg("Translate excel file success");
         ui->youdaoTipLabel->setVisible(true);
     }
     else {
-        onReceiveMsg("translate excel file failed");
+        onReceiveMsg("Translate excel file failed", true);
     }
 }
 
@@ -214,18 +219,24 @@ void MainWindow::on_tsImportBtn_clicked()
     re = m_pXmlWorker->ImportFromTS(m_transList, ui->tsPathEdit->text());
 
     if(re) {
-        onReceiveMsg("import .ts file success");
+        onReceiveMsg("Import .ts file success");
     } else {
-        onReceiveMsg("import .ts file failed");
+        onReceiveMsg("Import .ts file failed", true);
     }
 }
 
-void MainWindow::onReceiveMsg(const QString &msg)
+void MainWindow::onReceiveMsg(const QString &msg, bool err)
 {
-//    static QTimer tmrMsgClr;
-//    tmrMsgClr.start(3000);
-    ui->statusBar->showMessage(msg, 3000);
-//    connect(&tmrMsgClr, &QTimer::timeout, ui->statusBar, &QStatusBar::clearMessage);
+    static bool errBf = false;
+    if (errBf != err) {
+        if (err)
+            ui->statusBar->setStyleSheet("color:red");
+        else
+            ui->statusBar->setStyleSheet("color:black");
+        errBf = err;
+    }
+
+    ui->statusBar->showMessage(msg, err ? 5000 : 3000);
 }
 
 void MainWindow::on_tsDirLookBtn_clicked()
@@ -249,7 +260,7 @@ void MainWindow::on_excelDirBtn_clicked()
     else{
         QFileInfo info(fileName);
         if ("xlsx" != info.suffix()){
-            onReceiveMsg("File type is not supported");
+            onReceiveMsg("File type is not supported", true);
             return;
         }
     }
@@ -263,13 +274,13 @@ void MainWindow::on_generateBtn_2_clicked()
 
     QFileInfo tsDirinfo(ui->tsDirEdit->text());
     if (!tsDirinfo.isDir()){
-        onReceiveMsg("ts dir is empty");
+        onReceiveMsg("Ts dir is empty", true);
         return;
     }
 
     QFileInfo excelinfo(ui->excelDirEdit->text());
     if (!excelinfo.exists()){
-        onReceiveMsg("excel file is empty");
+        onReceiveMsg("Excel file is empty", true);
         return;
     }
     qDebug() << excelinfo.filePath() << excelinfo.absoluteDir().path();
@@ -281,7 +292,7 @@ void MainWindow::on_generateBtn_2_clicked()
     tsdir.setNameFilters(filters);
 
     if (tsdir.count() <= 0) {
-        onReceiveMsg("ts dir ts file is 0");
+        onReceiveMsg("Ts dir ts file is 0", true);
         return;
     }
 
@@ -291,9 +302,9 @@ void MainWindow::on_generateBtn_2_clicked()
         re = m_pXmlWorker->ImportFromTS(m_transList, info.absoluteFilePath());
 
         if(re) {
-            onReceiveMsg("import " + info.fileName() + " success");
+            onReceiveMsg("Import " + info.fileName() + " success");
         } else {
-            onReceiveMsg("import " + info.fileName() + " failed");
+            onReceiveMsg("Import " + info.fileName() + " failed", true);
         }
 
         //generate excel file
@@ -301,10 +312,10 @@ void MainWindow::on_generateBtn_2_clicked()
         QString excelFileName = excelinfo.absoluteDir().path() + "/" + info.baseName() + ".xlsx";
         re = m_pExcelWorker->ExportToXlsx(m_transList, excelFileName);
         if(re) {
-            onReceiveMsg("export " + excelFileName + " success");
+            onReceiveMsg("Export " + excelFileName + " success");
             ui->youdaoTipLabel->setVisible(false);
         } else {
-            onReceiveMsg("export " + excelFileName + " failed");
+            onReceiveMsg("Export " + excelFileName + " failed", true);
         }
     }
 }
@@ -315,13 +326,13 @@ void MainWindow::on_tsUpdateBtn_2_clicked()
 
     QFileInfo tsDirinfo(ui->tsDirEdit->text());
     if (!tsDirinfo.isDir()){
-        onReceiveMsg("ts dir is empty");
+        onReceiveMsg("Ts dir is empty", true);
         return;
     }
 
     QFileInfo excelDirinfo(ui->excelDirEdit->text());
     if (!excelDirinfo.exists()){
-        onReceiveMsg("excel path is empty");
+        onReceiveMsg("Excel path is empty", true);
         return;
     }
 
@@ -332,7 +343,7 @@ void MainWindow::on_tsUpdateBtn_2_clicked()
     tsdir.setNameFilters(filters);
 
     if (tsdir.count() <= 0) {
-        onReceiveMsg("ts dir ts file is 0");
+        onReceiveMsg("Ts dir ts file is 0", true);
         return;
     }
 
@@ -362,7 +373,7 @@ void MainWindow::on_tsUpdateBtn_2_clicked()
         }
     }
 
-    onReceiveMsg("all ts file update finish");
+    onReceiveMsg("All ts file update finish");
 }
 
 void MainWindow::readConfig()
