@@ -1,4 +1,4 @@
-#include "XmlRW.h"
+﻿#include "XmlRW.h"
 
 #include <QDebug>
 #include <QDomNodeList>
@@ -10,6 +10,9 @@
 #define SOURCE_ELEMENT      "source"
 #define TRANSLATION_ELEMENT "translation"
 
+#define comment_ELEMENT         "comment"
+#define extracomment_ELEMENT    "extracomment"
+
 XmlRW::XmlRW(QObject *parent) : QObject(parent)
 {
 
@@ -20,7 +23,7 @@ void XmlRW::UpdateTranslateMap(QList<TranslateModel>& list)
     m_translateMap.clear();
 
     foreach (TranslateModel model, list) {
-       m_translateMap[model.GetKey()] = model.GetTranslate();
+        m_translateMap[model.GetKey()] = { model.GetComment(), model.GetTranslate() };
     }
 }
 
@@ -59,8 +62,9 @@ bool XmlRW::ImportFromTS(QList<TranslateModel>& list, QString strPath)
         for (auto i = m_translateMap.constBegin(); i != m_translateMap.constEnd(); i++) {
             TranslateModel model;
             model.SetKey(i.key());
-            model.SetSource(i.value());
-            model.SetTranslate(i.value());
+//            model.SetSource(i.value());
+            model.SetComment(i.value().first);
+            model.SetTranslate(i.value().second);
             list.append(model);
         }
 
@@ -90,6 +94,9 @@ bool XmlRW::ExportToTS(QList<TranslateModel>& list, QString strPath)
         }
         file.close();
 
+        //auto pi = doc.createProcessingInstruction("xml",  R"(version="1.0" encoding="utf-8")");
+        //doc.appendChild(pi);  //添加到文档末尾
+
         QDomElement root=doc.documentElement();
         QDomNodeList list=root.elementsByTagName("message");
 
@@ -99,7 +106,7 @@ bool XmlRW::ExportToTS(QList<TranslateModel>& list, QString strPath)
             QDomNodeList childList = node.childNodes();
             QString strKey = childList.at(childList.count()-2).toElement().text();
             QString strTranslation = node.lastChild().toElement().text();
-            QString strValue = m_translateMap.value(strKey);
+            QString strValue = m_translateMap.value(strKey).second;
 
             qDebug() << i << "\ttranslatation:" << strTranslation << "\t\tkey:" << strKey << "\t\tvalue:" << strValue;
 
@@ -164,11 +171,18 @@ void XmlRW::ReadMessage()
 {
     Q_ASSERT(xml.isStartElement() && xml.name().toString() == MESSAGE_ELEMENT);
 
-    QString strSource, strTranslation, strLoaction;
+    QString strSource, strComment, strTranslation, strLoaction;
 
     while (xml.readNextStartElement()) {
         if (xml.name().toString() == SOURCE_ELEMENT) {
             strSource = xml.readElementText();
+        } else if (xml.name().toString() == comment_ELEMENT) {
+            strComment = xml.readElementText();
+        } else if (xml.name().toString() == extracomment_ELEMENT) {
+            if (strComment.isEmpty())
+                strComment = xml.readElementText();
+            else
+                strComment.append(" ## ").append(xml.readElementText());
         } else if (xml.name().toString() == TRANSLATION_ELEMENT) {
             strTranslation = xml.readElementText();
         } else if (xml.name().toString() == LOCATION_ELEMENT) {
@@ -190,10 +204,11 @@ void XmlRW::ReadMessage()
         }
     }
 
-    qDebug() << "key:" << strSource << "\ttranslation:" << strTranslation;
+    QString commemt = strComment.isEmpty() ? "" : "\tcm:" + strComment;
+    qDebug() << "key:" << strSource << commemt << "\ttr:" << strTranslation;
 
-    if(m_translateMap.contains(strSource)) {
+    if (m_translateMap.contains(strSource)) {
         qDebug() << "repeat key: " << strSource << "translation:" << strLoaction;
     }
-    m_translateMap.insert(strSource, strTranslation);
+    m_translateMap.insert(strSource, { strComment, strTranslation });
 }

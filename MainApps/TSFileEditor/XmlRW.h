@@ -1,8 +1,9 @@
-#ifndef XMLRW_H
+﻿#ifndef XMLRW_H
 #define XMLRW_H
 
 #include <QObject>
 #include <QtXml>
+#include <QPair>
 
 #include "DataModel/TranslateModel.h"
 
@@ -24,7 +25,7 @@ private:
 
     QXmlStreamReader xml;
     QString m_tsFilePath;
-    QMap<QString, QString> m_translateMap;
+    QMap<QString, QPair<QString,QString> > m_translateMap;
 };
 
 #endif // XMLRW_H

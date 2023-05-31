@@ -79,7 +79,8 @@ bool ExcelRW::ImportFromXlsx(QList<TranslateModel> &list, QString strPath)
 
             TranslateModel model;
             model.SetKey(strKey, true);
-            model.SetSource(strSource, true);
+//            model.SetSource(strSource, true);
+            model.SetComment(strSource);
             model.SetTranslate(strTranslate, true);
             list.append(model);
         }
@@ -102,9 +103,9 @@ bool ExcelRW::ExportToXlsx(QList<TranslateModel>& list, QString strPath)
         return false;
     }
 
-    QString strHeaderkey = tr("Key");
-    QString strHeaderSource = tr("Source");
-    QString strHeaderTranslate = tr("Translate");
+    QString strHeaderkey = tr("源");
+    QString strHeaderSource = tr("注释");
+    QString strHeaderTranslate = tr("翻译");
 
     QXlsx::Document xlsx;
     xlsx.addSheet("Sheet1");
@@ -116,14 +117,19 @@ bool ExcelRW::ExportToXlsx(QList<TranslateModel>& list, QString strPath)
     {
         for(int j=1; j<=3; j++){
             xlsx.write(i+2, m_KeyColumn, QVariant(list[i].GetKey(true)));
-            xlsx.write(i+2, m_SourceColumn, QVariant(list[i].GetSource(true)));
+//            xlsx.write(i+2, m_SourceColumn, QVariant(list[i].GetSource(true)));
+            xlsx.write(i+2, m_SourceColumn, QVariant(list[i].GetComment()));
             xlsx.write(i+2, m_TransColumn, QVariant(list[i].GetTranslate(true)));
         }
     }
 
-    xlsx.saveAs(strPath);
+    int commentWidth = 30;
+    int langWidth = 60;
+    xlsx.setColumnWidth(m_KeyColumn, langWidth);
+    xlsx.setColumnWidth(m_SourceColumn, commentWidth);
+    xlsx.setColumnWidth(m_TransColumn, langWidth);
 
-    return true;
+    return xlsx.saveAs(strPath);
 }
 
 void ExcelRW::SetTransColumn(int column)

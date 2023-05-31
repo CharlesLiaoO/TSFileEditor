@@ -6,16 +6,13 @@
 class TranslateModel
 {
 public:
-    explicit TranslateModel();
-    TranslateModel(const TranslateModel&);
-    TranslateModel &operator= (const TranslateModel&);
-    ~TranslateModel();
-
     QString GetKey(bool es=false) const;
+    QString GetComment(bool es=false) const;
     QString GetSource(bool es=false) const;
     QString GetTranslate(bool es=false) const;
 
     void SetKey(const QString &str, bool es=false);
+    void SetComment(const QString &str, bool es=false);
     void SetSource(const QString &str, bool es=false);
     void SetTranslate(const QString &str, bool es=false);
 
@@ -31,6 +28,7 @@ public:
     }
 private:
     QString m_key;
+    QString m_comment;
     QString m_source;
     QString m_translate;
 };

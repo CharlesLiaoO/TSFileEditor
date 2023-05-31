@@ -1,37 +1,14 @@
 ﻿#include "TranslateModel.h"
 
-TranslateModel::TranslateModel()
-{
-
-}
-
-TranslateModel::TranslateModel(const TranslateModel &other)
-{
-    this->m_key = other.GetKey();
-    this->m_source = other.GetSource();
-    this->m_translate = other.GetTranslate();
-}
-
-TranslateModel &TranslateModel::operator=(const TranslateModel &other)
-{
-    if(&other != this){
-        this->m_key = other.GetKey();
-        this->m_source = other.GetSource();
-        this->m_translate = other.GetTranslate();
-    }
-
-    return *this;
-}
-
-TranslateModel::~TranslateModel()
-{
-
-}
-
 //****************************Getter && Setter*************************************
 QString TranslateModel::GetKey(bool es) const
 {
     return es ? ToEscapeStr(m_key) : m_key;
+}
+
+QString TranslateModel::GetComment(bool es) const
+{
+    return es ? ToEscapeStr(m_comment) : m_comment;
 }
 
 QString TranslateModel::GetSource(bool es) const
@@ -47,6 +24,11 @@ QString TranslateModel::GetTranslate(bool es) const
 void TranslateModel::SetKey(const QString &str, bool es)
 {
     m_key = es ? FromEscapeStr(str) : str;
+}
+
+void TranslateModel::SetComment(const QString &str, bool es)
+{
+    m_comment = es ? FromEscapeStr(str) : str;
 }
 
 void TranslateModel::SetSource(const QString &str, bool es)
