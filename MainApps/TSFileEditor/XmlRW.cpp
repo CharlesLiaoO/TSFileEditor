@@ -5,6 +5,7 @@
 
 #define ROOT_ELEMENT        "TS"
 #define CONTEXT_ELEMENT     "context"
+#define CONTEXT_name_ELEMENT     "name"
 #define MESSAGE_ELEMENT     "message"
 #define LOCATION_ELEMENT    "location"
 #define SOURCE_ELEMENT      "source"
@@ -160,6 +161,8 @@ void XmlRW::ReadContext()
     while (xml.readNextStartElement()) {
         if (xml.name().toString() == MESSAGE_ELEMENT) {
             ReadMessage();
+        } else if (xml.name().toString() == CONTEXT_name_ELEMENT) {
+            strComment = xml.readElementText();
         }
         else {
             xml.skipCurrentElement();
