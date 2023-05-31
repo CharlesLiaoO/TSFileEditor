@@ -1,4 +1,4 @@
-#include "ExcelRW.h"
+﻿#include "ExcelRW.h"
 #include <QRegExpValidator>
 #include <QFileInfo>
 
@@ -78,9 +78,9 @@ bool ExcelRW::ImportFromXlsx(QList<TranslateModel> &list, QString strPath)
 
 
             TranslateModel model;
-            model.SetKey(strKey);
-            model.SetSource(strSource);
-            model.SetTranslate(strTranslate);
+            model.SetKey(strKey, true);
+            model.SetSource(strSource, true);
+            model.SetTranslate(strTranslate, true);
             list.append(model);
         }
     }while(0);
@@ -115,9 +115,9 @@ bool ExcelRW::ExportToXlsx(QList<TranslateModel>& list, QString strPath)
     for(int i=0; i < list.count(); i++)
     {
         for(int j=1; j<=3; j++){
-            xlsx.write(i+2, m_KeyColumn, QVariant(list[i].GetKey()));
-            xlsx.write(i+2, m_SourceColumn, QVariant(list[i].GetSource()));
-            xlsx.write(i+2, m_TransColumn, QVariant(list[i].GetTranslate()));
+            xlsx.write(i+2, m_KeyColumn, QVariant(list[i].GetKey(true)));
+            xlsx.write(i+2, m_SourceColumn, QVariant(list[i].GetSource(true)));
+            xlsx.write(i+2, m_TransColumn, QVariant(list[i].GetTranslate(true)));
         }
     }
 

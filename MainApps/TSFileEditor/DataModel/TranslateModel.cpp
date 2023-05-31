@@ -1,4 +1,4 @@
-#include "TranslateModel.h"
+﻿#include "TranslateModel.h"
 
 TranslateModel::TranslateModel()
 {
@@ -29,32 +29,32 @@ TranslateModel::~TranslateModel()
 }
 
 //****************************Getter && Setter*************************************
-QString TranslateModel::GetKey() const
+QString TranslateModel::GetKey(bool es) const
 {
-    return m_key;
+    return es ? ToEscapeStr(m_key) : m_key;
 }
 
-QString TranslateModel::GetSource() const
+QString TranslateModel::GetSource(bool es) const
 {
-    return m_source;
+    return es ? ToEscapeStr(m_source) : m_source;
 }
 
-QString TranslateModel::GetTranslate() const
+QString TranslateModel::GetTranslate(bool es) const
 {
-    return m_translate;
+    return es ? ToEscapeStr(m_translate) : m_translate;
 }
 
-void TranslateModel::SetKey(const QString &str)
+void TranslateModel::SetKey(const QString &str, bool es)
 {
-    m_key = str;
+    m_key = es ? FromEscapeStr(str) : str;
 }
 
-void TranslateModel::SetSource(const QString &str)
+void TranslateModel::SetSource(const QString &str, bool es)
 {
-    m_source = str;
+    m_source = es ? FromEscapeStr(str) : str;
 }
 
-void TranslateModel::SetTranslate(const QString &str)
+void TranslateModel::SetTranslate(const QString &str, bool es)
 {
-    m_translate = str;
+    m_translate = es ? FromEscapeStr(str) : str;
 }
