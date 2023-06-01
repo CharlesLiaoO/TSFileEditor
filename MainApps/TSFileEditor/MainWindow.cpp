@@ -388,7 +388,7 @@ void MainWindow::readConfig()
     ui->tsDirEdit->setText(settings.value("tsDir").toString());
 
     ui->excelPathEdit->setText(settings.value("excelPath").toString());
-    ui->excelDirEdit->setText(settings.value("excelPath2").toString());
+    ui->excelDirEdit->setText(settings.value("excelDir").toString());
     settings.endGroup();
 
     m_tsColumnMap.clear();
@@ -413,7 +413,7 @@ void MainWindow::saveConfig()
     settings.setValue("tsPath", ui->tsPathEdit->text());
     settings.setValue("tsDir", ui->tsDirEdit->text());
     settings.setValue("excelPath", ui->excelPathEdit->text());
-    settings.setValue("excelPath2", ui->excelDirEdit->text());
+    settings.setValue("excelDir", ui->excelDirEdit->text());
     settings.endGroup();
 
 //    m_tsColumnMap.clear();
