@@ -39,6 +39,8 @@ private slots:
     void on_generateBtn_2_clicked();
     void on_tsUpdateBtn_2_clicked();
 
+    void on_pushButton_ExcelFileNameFollowTs_clicked();
+
 private:
     Ui::MainWindow*         ui;
 

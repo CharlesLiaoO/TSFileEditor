@@ -100,6 +100,20 @@ color: #FF0000;
           </widget>
          </item>
          <item>
+          <widget class="Line" name="line">
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="pushButton_ExcelFileNameFollowTs">
+           <property name="text">
+            <string>Excel 文件名跟随 Ts</string>
+           </property>
+          </widget>
+         </item>
+         <item>
           <spacer name="horizontalSpacer">
            <property name="orientation">
             <enum>Qt::Horizontal</enum>
@@ -119,21 +133,21 @@ color: #FF0000;
          <item>
           <widget class="QPushButton" name="tsImportBtn">
            <property name="text">
-            <string>ts导入</string>
+            <string>Ts导入</string>
            </property>
           </widget>
          </item>
          <item>
           <widget class="QPushButton" name="generateBtn">
            <property name="text">
-            <string>excel生成</string>
+            <string>Excel生成</string>
            </property>
           </widget>
          </item>
          <item>
           <widget class="QPushButton" name="tsUpdateBtn">
            <property name="text">
-            <string>译文写入（excel to ts）</string>
+            <string>译文写入(Excel to Ts)</string>
            </property>
           </widget>
          </item>

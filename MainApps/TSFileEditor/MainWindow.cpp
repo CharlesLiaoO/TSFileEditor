@@ -432,6 +432,22 @@ void MainWindow::saveConfig()
 //    settings.endArray();
 }
 
+void MainWindow::on_pushButton_ExcelFileNameFollowTs_clicked()
+{
+//    QString tsPath = ui->tsPathEdit->text();
+
+    QFileInfo tfi(ui->tsPathEdit->text());
+    QFileInfo efi(ui->excelPathEdit->text());
+
+    QString excelPath = QString("%1/%2.xlsx");
+    if (efi.path().isEmpty())
+        excelPath = excelPath.arg(tfi.path(), tfi.baseName());
+    else
+        excelPath = excelPath.arg(efi.path(), tfi.baseName());
+
+    ui->excelPathEdit->setText(excelPath);
+}
+
 void MainWindow::BrowseExcelExePath()
 {
     QString configPath = QApplication::applicationDirPath();
