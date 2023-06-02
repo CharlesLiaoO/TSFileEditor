@@ -211,7 +211,7 @@ void MainWindow::on_tsImportBtn_clicked()
 
     QFileInfo info(ui->tsPathEdit->text());
     if (!info.isFile() || "ts" != info.suffix()){
-        onReceiveMsg("File type is not supported");
+        onReceiveMsg("File type is not supported", true);
         return;
     }
 
