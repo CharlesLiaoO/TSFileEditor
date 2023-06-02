@@ -96,10 +96,11 @@ void MainWindow::on_generateBtn_clicked()
     m_pExcelWorker->SetTransColumn(ui->transSpinBox->value());
 
     //generate excel file
-    if(ui->excelPathEdit->text().isEmpty()) {
+    QString fileName = ui->excelPathEdit->text();
+    if(fileName.isEmpty()) {
         const QString documentLocation = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation);
         QString saveName = documentLocation + "/untitled.xlsx";
-        QString fileName = QFileDialog::getSaveFileName(this, "excel file path", saveName, "Files (*.xlsx)");
+        fileName = QFileDialog::getSaveFileName(this, "excel file path", saveName, "Files (*.xlsx)");
 
         if (fileName.isEmpty())
         {
@@ -110,10 +111,11 @@ void MainWindow::on_generateBtn_clicked()
         }
     }
 
-    re = m_pExcelWorker->ExportToXlsx(m_transList, ui->excelPathEdit->text());
+    re = m_pExcelWorker->ExportToXlsx(m_transList, fileName);
     if(re) {
         onReceiveMsg("Export excel file success");
         ui->youdaoTipLabel->setVisible(false);
+        runExcel(fileName);
     } else {
         onReceiveMsg("Export excel file failed", true);
     }
@@ -428,4 +430,38 @@ void MainWindow::saveConfig()
 //        settings.setValue("tsFile", i.value());
 //    }
 //    settings.endArray();
+}
+
+void MainWindow::BrowseExcelExePath()
+{
+    QString configPath = QApplication::applicationDirPath();
+#if __DEBUG
+    configPath.append("/../Config");
+#endif
+    QSettings settings(configPath + "/config.ini", QSettings::IniFormat);
+
+    QString excelPath = settings.value("ExcelExePath").toString();
+    if (excelPath.isEmpty())
+        excelPath = QStandardPaths::writableLocation(QStandardPaths::ApplicationsLocation);
+    excelPath = QFileDialog::getOpenFileName(this, tr("Select Excel Exe Path"), excelPath, "", nullptr,  QFileDialog::DontResolveSymlinks);
+    if (excelPath.isEmpty())
+        return;
+
+    settings.setValue("ExcelExePath", excelPath);
+}
+
+void MainWindow::runExcel(const QString &xlsxFile)
+{
+    QString configPath = QApplication::applicationDirPath();
+#if __DEBUG
+    configPath.append("/../Config");
+#endif
+    QSettings settings(configPath + "/config.ini", QSettings::IniFormat);
+
+    // excel 目录如：C:/Program Files/Microsoft Office/Office15/EXCEL.EXE
+    QString excelPath = settings.value("ExcelExePath").toString();
+    if (excelPath.isEmpty())
+        return;
+
+    QProcess::startDetached(excelPath, {xlsxFile});  //不支持excel的快捷方式去调用，所以不做浏览定位excel位置
 }

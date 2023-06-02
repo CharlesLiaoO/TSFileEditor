@@ -133,7 +133,7 @@ color: #FF0000;
          <item>
           <widget class="QPushButton" name="tsUpdateBtn">
            <property name="text">
-            <string>译文写入</string>
+            <string>译文写入（excel to ts）</string>
            </property>
           </widget>
          </item>
