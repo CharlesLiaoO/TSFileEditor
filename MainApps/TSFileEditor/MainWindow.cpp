@@ -381,9 +381,6 @@ void MainWindow::on_tsUpdateBtn_2_clicked()
 void MainWindow::readConfig()
 {
     QString configPath = QApplication::applicationDirPath();
-#if __DEBUG
-    configPath.append("/../Config");
-#endif
     QSettings settings(configPath + "/config.ini", QSettings::IniFormat);
     settings.beginGroup("path");
     ui->tsPathEdit->setText(settings.value("tsPath").toString());
@@ -407,9 +404,6 @@ void MainWindow::readConfig()
 void MainWindow::saveConfig()
 {
     QString configPath = QApplication::applicationDirPath();
-#if __DEBUG
-    configPath.append("/../Config");
-#endif
     QSettings settings(configPath + "/config.ini", QSettings::IniFormat);
     settings.beginGroup("path");
     settings.setValue("tsPath", ui->tsPathEdit->text());
@@ -451,9 +445,6 @@ void MainWindow::on_pushButton_ExcelFileNameFollowTs_clicked()
 void MainWindow::BrowseExcelExePath()
 {
     QString configPath = QApplication::applicationDirPath();
-#if __DEBUG
-    configPath.append("/../Config");
-#endif
     QSettings settings(configPath + "/config.ini", QSettings::IniFormat);
 
     QString excelPath = settings.value("ExcelExePath").toString();
@@ -469,9 +460,6 @@ void MainWindow::BrowseExcelExePath()
 void MainWindow::runExcel(const QString &xlsxFile)
 {
     QString configPath = QApplication::applicationDirPath();
-#if __DEBUG
-    configPath.append("/../Config");
-#endif
     QSettings settings(configPath + "/config.ini", QSettings::IniFormat);
 
     // excel 目录如：C:/Program Files/Microsoft Office/Office15/EXCEL.EXE
