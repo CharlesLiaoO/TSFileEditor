@@ -11,6 +11,9 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = TSFileEditor
 TEMPLATE = app
+TRANSLATIONS += \
+    ../../bin/app_en.ts \
+    ../../bin/app_zh_CN.ts
 
 include(./../../Path.pri)
 
