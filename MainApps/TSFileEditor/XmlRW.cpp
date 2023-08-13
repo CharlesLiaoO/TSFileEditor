@@ -103,8 +103,7 @@ bool XmlRW::ExportToTS(QList<TranslateModel>& list, QString strPath)
         QDomNode node;
         for(int i=0; i < list.count(); i++) {
             node = list.at(i);
-            QDomNodeList childList = node.childNodes();
-            QString strKey = childList.at(childList.count()-2).toElement().text();
+            QString strKey = node.firstChildElement(SOURCE_ELEMENT).text();
 
             //QString strTranslation = node.firstChildElement(TRANSLATION_ELEMENT).text();
             QString strTranslation = node.lastChild().toElement().text();
