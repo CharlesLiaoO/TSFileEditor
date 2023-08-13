@@ -10,7 +10,9 @@
 #define SOURCE_ELEMENT      "source"
 #define TRANSLATION_ELEMENT "translation"
 
+#define comment_sep         "\x1F"
 #define comment_ELEMENT         "comment"
+#define excomment_sep         " ## "
 #define extracomment_ELEMENT    "extracomment"
 
 XmlRW::XmlRW(QObject *parent) : QObject(parent)
@@ -23,7 +25,11 @@ void XmlRW::UpdateTranslateMap(QList<TranslateModel>& list)
     m_translateMap.clear();
 
     foreach (TranslateModel model, list) {
-        m_translateMap[model.GetKey()] = { model.GetComment(), model.GetTranslate() };
+        QString comment = model.GetComment();
+        QString key = model.GetKey();
+        if (!comment.isEmpty())
+            key += comment_sep + comment;
+        m_translateMap[key] = model.GetTranslate();
     }
 }
 
@@ -61,10 +67,19 @@ bool XmlRW::ImportFromTS(QList<TranslateModel>& list, QString strPath)
 
         for (auto i = m_translateMap.constBegin(); i != m_translateMap.constEnd(); i++) {
             TranslateModel model;
-            model.SetKey(i.key());
+
+            QString key = i.key();
+            QString comment;
+            if (i.key().contains(comment_sep)) {
+                QStringList sl = key.split(comment_sep);
+                key = sl.at(0);
+                comment = sl.at(1);
+            }
+
+            model.SetKey(key);
 //            model.SetSource(i.value());
-            model.SetComment(i.value().first);
-            model.SetTranslate(i.value().second);
+            model.SetComment(comment);
+            model.SetTranslate(i.value());
             list.append(model);
         }
 
@@ -105,9 +120,19 @@ bool XmlRW::ExportToTS(QList<TranslateModel>& list, QString strPath)
             node = list.at(i);
             QString strKey = node.firstChildElement(SOURCE_ELEMENT).text();
 
+            QString strComment = node.firstChildElement(comment_ELEMENT).text();
+            QString strExComment = node.firstChildElement(extracomment_ELEMENT).text();
+            if (strComment.isEmpty())
+                strComment = strExComment;
+            else
+                strComment.append(excomment_sep).append(strExComment);
+
+            if (!strComment.isEmpty())
+                strKey.append(comment_sep).append(strComment);
+
             //QString strTranslation = node.firstChildElement(TRANSLATION_ELEMENT).text();
             QString strTranslation = node.lastChild().toElement().text();
-            QString strValue = m_translateMap.value(strKey).second;
+            QString strValue = m_translateMap.value(strKey);
 
             qDebug() << i << "\ttranslatation:" << strTranslation << "\t\tkey:" << strKey << "\t\tvalue:" << strValue;
 
@@ -183,7 +208,7 @@ void XmlRW::ReadMessage()
             if (strComment.isEmpty())
                 strComment = xml.readElementText();
             else
-                strComment.append(" ## ").append(xml.readElementText());
+                strComment.append(excomment_sep).append(xml.readElementText());
         } else if (xml.name().toString() == TRANSLATION_ELEMENT) {
             strTranslation = xml.readElementText();
         } else if (xml.name().toString() == LOCATION_ELEMENT) {
@@ -205,11 +230,14 @@ void XmlRW::ReadMessage()
         }
     }
 
-    QString commemt = strComment.isEmpty() ? "" : "\tcm:" + strComment;
-    qDebug() << "key:" << strSource << commemt << "\ttr:" << strTranslation;
+    if (!strComment.isEmpty())
+        strSource.append(comment_sep + strComment);
+
+//    QString commemt = strComment.isEmpty() ? "" : "\cm:" + strComment;
+    qDebug() << "key:" << strSource << /*commemt << */"\tr:" << strTranslation;
 
     if (m_translateMap.contains(strSource)) {
         qDebug() << "repeat key: " << strSource << "translation:" << strLoaction;
     }
-    m_translateMap.insert(strSource, { strComment, strTranslation });
+    m_translateMap.insert(strSource, strTranslation);
 }

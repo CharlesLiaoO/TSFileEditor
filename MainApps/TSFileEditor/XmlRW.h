@@ -25,7 +25,7 @@ private:
 
     QXmlStreamReader xml;
     QString m_tsFilePath;
-    QMap<QString, QPair<QString,QString> > m_translateMap;
+    QMap<QString, QString> m_translateMap;
 };
 
 #endif // XMLRW_H

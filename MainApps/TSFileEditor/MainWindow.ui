@@ -44,7 +44,7 @@ color: #FF0000;
          <item>
           <widget class="QPushButton" name="tsLookBtn">
            <property name="text">
-            <string extracomment="动词！">浏览</string>
+            <string comment="disambiguation（ts内为comment）可以区分两个翻译">浏览</string>
            </property>
           </widget>
          </item>
@@ -65,7 +65,7 @@ color: #FF0000;
          <item>
           <widget class="QPushButton" name="excelLookBtn">
            <property name="text">
-            <string>浏览</string>
+            <string extracomment="comment（ts内为extralcomment）不可以区分两个翻译">浏览</string>
            </property>
           </widget>
          </item>
