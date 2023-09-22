@@ -218,8 +218,8 @@ void MainWindow::on_tsImportBtn_clicked()
     }
 
     m_transList.clear();
-    re = m_pXmlWorker->ImportFromTS(m_transList, ui->tsPathEdit->text());
-
+    bool mergeTs = ui->checkBox_MergeTs->isChecked();
+    re = m_pXmlWorker->ImportFromTS(m_transList, ui->tsPathEdit->text(), mergeTs);
     if(re) {
         onReceiveMsg("Import .ts file success");
     } else {
@@ -301,7 +301,7 @@ void MainWindow::on_generateBtn_2_clicked()
     for (QFileInfo info : tsdir.entryInfoList()) {
         //import ts file
         m_transList.clear();
-        re = m_pXmlWorker->ImportFromTS(m_transList, info.absoluteFilePath());
+        re = m_pXmlWorker->ImportFromTS(m_transList, info.absoluteFilePath(), false);
 
         if(re) {
             onReceiveMsg("Import " + info.fileName() + " success");
@@ -356,7 +356,7 @@ void MainWindow::on_tsUpdateBtn_2_clicked()
 
         //import ts file
         m_transList.clear();
-        re = m_pXmlWorker->ImportFromTS(m_transList, info.absoluteFilePath());
+        re = m_pXmlWorker->ImportFromTS(m_transList, info.absoluteFilePath(), false);
 
         if(!re) {
             continue;

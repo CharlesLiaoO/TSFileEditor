@@ -114,6 +114,16 @@ color: #FF0000;
           </widget>
          </item>
          <item>
+          <widget class="QCheckBox" name="checkBox_MergeTs">
+           <property name="toolTip">
+            <string>将多个Ts合并到同一个Excel时，取消勾选</string>
+           </property>
+           <property name="text">
+            <string>合并多个Ts文件数据</string>
+           </property>
+          </widget>
+         </item>
+         <item>
           <spacer name="horizontalSpacer">
            <property name="orientation">
             <enum>Qt::Horizontal</enum>

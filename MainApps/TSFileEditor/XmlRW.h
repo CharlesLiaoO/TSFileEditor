@@ -13,7 +13,7 @@ class XmlRW : public QObject
 public:
     explicit XmlRW(QObject *parent = 0);
 
-    bool ImportFromTS(QList<TranslateModel>& list, QString strPath);
+    bool ImportFromTS(QList<TranslateModel>& list, QString strPath, bool mergeTs);
     bool ExportToTS(QList<TranslateModel>& list, QString strPath);
     QString ErrorString() const;
 

@@ -33,7 +33,7 @@ void XmlRW::UpdateTranslateMap(QList<TranslateModel>& list)
     }
 }
 
-bool XmlRW::ImportFromTS(QList<TranslateModel>& list, QString strPath)
+bool XmlRW::ImportFromTS(QList<TranslateModel>& list, QString strPath, bool mergeTs)
 {
     QFile file(strPath);
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
@@ -41,7 +41,8 @@ bool XmlRW::ImportFromTS(QList<TranslateModel>& list, QString strPath)
     }
     else {
         xml.setDevice(&file);
-//        m_translateMap.clear();
+        if (!mergeTs)
+            m_translateMap.clear();
 
         if (xml.readNextStartElement()) {
             QString strName = xml.name().toString();
