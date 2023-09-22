@@ -44,7 +44,7 @@ color: #FF0000;
          <item>
           <widget class="QPushButton" name="tsLookBtn">
            <property name="text">
-            <string comment="disambiguation（ts内为comment）可以区分两个翻译">浏览</string>
+            <string comment="disambiguation（ts内为comment）可以区分两个翻译">浏览并导入</string>
            </property>
           </widget>
          </item>
@@ -103,6 +103,13 @@ color: #FF0000;
           <widget class="Line" name="line">
            <property name="orientation">
             <enum>Qt::Vertical</enum>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="pushButton_ExcelFileDirFollowTs">
+           <property name="text">
+            <string>Excel 目录跟随 Ts</string>
            </property>
           </widget>
          </item>

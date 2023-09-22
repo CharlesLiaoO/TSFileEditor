@@ -426,20 +426,32 @@ void MainWindow::saveConfig()
 //    settings.endArray();
 }
 
-void MainWindow::on_pushButton_ExcelFileNameFollowTs_clicked()
+void MainWindow::on_pushButton_ExcelFileDirFollowTs_clicked()
 {
-//    QString tsPath = ui->tsPathEdit->text();
-
     QFileInfo tfi(ui->tsPathEdit->text());
     QFileInfo efi(ui->excelPathEdit->text());
 
-    QString excelPath = QString("%1/%2.xlsx");
+    QString newExcelPath = QString("%1/%2.xlsx");
     if (efi.path().isEmpty())
-        excelPath = excelPath.arg(tfi.path(), tfi.baseName());
+        newExcelPath = newExcelPath.arg(tfi.path(), tfi.baseName());
     else
-        excelPath = excelPath.arg(efi.path(), tfi.baseName());
+        newExcelPath = newExcelPath.arg(tfi.path(), efi.baseName());
 
-    ui->excelPathEdit->setText(excelPath);
+    ui->excelPathEdit->setText(newExcelPath);
+}
+
+void MainWindow::on_pushButton_ExcelFileNameFollowTs_clicked()
+{
+    QFileInfo tfi(ui->tsPathEdit->text());
+    QFileInfo efi(ui->excelPathEdit->text());
+
+    QString newExcelPath = QString("%1/%2.xlsx");
+    if (efi.path().isEmpty())
+        newExcelPath = newExcelPath.arg(tfi.path(), tfi.baseName());
+    else
+        newExcelPath = newExcelPath.arg(efi.path(), tfi.baseName());
+
+    ui->excelPathEdit->setText(newExcelPath);
 }
 
 void MainWindow::BrowseExcelExePath()
