@@ -170,6 +170,27 @@ color: #FF0000;
          </item>
         </layout>
        </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_8">
+         <item>
+          <widget class="QLabel" name="label">
+           <property name="text">
+            <string>Excel 程序路径：</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLineEdit" name="lineEdit_ExcelExePath">
+           <property name="text">
+            <string/>
+           </property>
+           <property name="placeholderText">
+            <string>如填写，则Excel生成后打开。路径如 C:/Program Files/Microsoft Office/Office15/EXCEL.EXE</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
       </layout>
      </widget>
     </item>
