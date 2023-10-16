@@ -14,7 +14,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    ui->statusBar->setStyleSheet("color:black");  //qt5.12.12默认为红色，这里改为黑色
+    ui->statusBar->setStyleSheet("color:blue");  //qt5.12.12默认为红色，这里修改
 
     m_toLanguage = "en";
     m_pXmlWorker = new XmlRW(this);
@@ -234,7 +234,7 @@ void MainWindow::onReceiveMsg(const QString &msg, bool err)
         if (err)
             ui->statusBar->setStyleSheet("color:red");
         else
-            ui->statusBar->setStyleSheet("color:black");
+            ui->statusBar->setStyleSheet("color:blue");
         errBf = err;
     }
 
