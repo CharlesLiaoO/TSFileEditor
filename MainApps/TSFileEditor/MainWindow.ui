@@ -6,12 +6,12 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>570</width>
+    <width>575</width>
     <height>510</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>TsFileEditor</string>
   </property>
   <property name="styleSheet">
    <string notr="true">QStatusBar {
