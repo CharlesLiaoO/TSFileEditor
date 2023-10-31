@@ -238,7 +238,9 @@ void XmlRW::ReadMessage()
     qDebug() << "key:" << strSource << /*commemt << */"\tr:" << strTranslation;
 
     if (m_translateMap.contains(strSource)) {
-        qDebug() << "repeat key: " << strSource << "translation:" << strLoaction;
+        // qDebug() << "repeat key: " << strSource << "translation:" << strLoaction;
+        if (!m_translateMap[strSource].isEmpty() && strTranslation.isEmpty())  //已有翻译且新翻译为空，则保留已有翻译
+            return;
     }
     m_translateMap.insert(strSource, strTranslation);
 }
