@@ -121,16 +121,6 @@ color: #FF0000;
           </widget>
          </item>
          <item>
-          <widget class="QCheckBox" name="checkBox_MergeTs">
-           <property name="toolTip">
-            <string>将多个Ts合并到同一个Excel时，取消勾选</string>
-           </property>
-           <property name="text">
-            <string>合并多个Ts文件数据</string>
-           </property>
-          </widget>
-         </item>
-         <item>
           <spacer name="horizontalSpacer">
            <property name="orientation">
             <enum>Qt::Horizontal</enum>
@@ -151,6 +141,27 @@ color: #FF0000;
           <widget class="QPushButton" name="tsImportBtn">
            <property name="text">
             <string>Ts导入</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="tsMergeFromOtherBtn">
+           <property name="text">
+            <string>从其它Ts合并</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="tsSaveBtn">
+           <property name="text">
+            <string>Ts保存</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="Line" name="line_2">
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
            </property>
           </widget>
          </item>

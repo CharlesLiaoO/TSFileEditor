@@ -14,6 +14,7 @@ class MainWindow;
 class XmlRW;
 class ExcelRW;
 class TranslateWorker;
+class QFileInfo;
 
 class MainWindow : public QMainWindow
 {
@@ -30,6 +31,9 @@ private slots:
     void on_tsUpdateBtn_clicked();
     void on_translateBtn_clicked();
     void on_tsImportBtn_clicked();
+    bool ImportFromTs(const QFileInfo &impFi, bool merge);
+    void on_tsMergeFromOtherBtn_clicked();
+    void on_tsSaveBtn_clicked();
 
     void onComboBoxChanged(int);
     void onReceiveMsg(const QString& msg, bool err=false);

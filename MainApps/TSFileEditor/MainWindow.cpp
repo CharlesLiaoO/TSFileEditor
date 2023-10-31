@@ -16,6 +16,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
     ui->statusBar->setStyleSheet("color:blue");  //qt5.12.12默认为红色，这里修改
 
+    ui->tsSaveBtn->hide();  // 自动保存，不用用户点击
+
     m_toLanguage = "en";
     m_pXmlWorker = new XmlRW(this);
     m_pExcelWorker = new ExcelRW(2, 1, 3, this);
@@ -204,26 +206,68 @@ void MainWindow::onComboBoxChanged(int)
 
 void MainWindow::on_tsImportBtn_clicked()
 {
-    bool re;
-
     //import .ts file
     if(ui->tsPathEdit->text().isEmpty()) {
         on_tsLookBtn_clicked();
     }
 
     QFileInfo info(ui->tsPathEdit->text());
-    if (!info.isFile() || "ts" != info.suffix()){
+
+    ImportFromTs(info, false);
+}
+
+#include <QProcess>
+bool MainWindow::ImportFromTs(const QFileInfo &impFi, bool merge)
+{
+    if (!impFi.isFile() || "ts" != impFi.suffix()) {
         onReceiveMsg("File type is not supported", true);
-        return;
+        return false;
     }
 
     m_transList.clear();
-    bool mergeTs = ui->checkBox_MergeTs->isChecked();
-    re = m_pXmlWorker->ImportFromTS(m_transList, ui->tsPathEdit->text(), mergeTs);
-    if(re) {
+    //更新到 m_translateMap，如果是合并，则剔除新的非空翻译
+    bool re = m_pXmlWorker->ImportFromTS(m_transList, impFi.filePath(), merge);
+
+    if (merge) {
+        QProcess tsMergePrc;
+        tsMergePrc.setProgram(("lconvert.exe"));
+        QString curFile = ui->tsPathEdit->text();
+        //合并ts文件，不能剔除新的非空翻译。即 lconvert -i f1 f2 -o f3, f3总是保留f2的翻译，即使f2的翻译为空
+        tsMergePrc.setArguments({"-i", impFi.filePath(), curFile, "-o", curFile});
+        tsMergePrc.start();
+        re = tsMergePrc.waitForFinished() && tsMergePrc.exitStatus() == QProcess::NormalExit && tsMergePrc.exitCode() == 0;
+
+        if (re)
+            on_tsSaveBtn_clicked();  //按照当前ts文件和m_translateMap更新ts文件
+    }
+
+    if (re) {
         onReceiveMsg("Import .ts file success");
     } else {
         onReceiveMsg("Import .ts file failed", true);
+    }
+
+    return true;
+}
+
+void MainWindow::on_tsMergeFromOtherBtn_clicked()
+{
+    QString dir = QFileInfo(LineEditBrowsePath(ui->tsPathEdit)).path();
+    QString path = QFileDialog::getOpenFileName(this, "", dir, "*.ts");
+    if (path.isEmpty())
+        return;
+
+    ImportFromTs(QFileInfo(path), true);
+}
+
+void MainWindow::on_tsSaveBtn_clicked()
+{
+    bool re = m_pXmlWorker->ExportToTS(m_transList, ui->tsPathEdit->text());
+
+    if(re) {
+        onReceiveMsg(tr("Update .ts file success"));
+    } else {
+        onReceiveMsg(tr("Update .ts file failed"), true);
     }
 }
 
