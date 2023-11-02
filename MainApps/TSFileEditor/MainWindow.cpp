@@ -9,6 +9,25 @@
 #include <QListView>
 #include <QSslSocket>
 
+#include <QProcess>
+bool LConvert(const QStringList &ifs, const QString &of) {
+    //合并ts文件，不能剔除新的非空翻译。即 lconvert -i f1 f2 -o f3, f3总是保留f2的翻译，即使f2的翻译为空
+    QProcess tsMergePrc;
+    tsMergePrc.setProgram(("lconvert.exe"));
+    QStringList args = ifs;
+    args.prepend("-i");
+    args.append("-o");
+    args.append(of);
+    tsMergePrc.setArguments(args);
+    qDebug()<< tsMergePrc.program()<< tsMergePrc.arguments();
+    tsMergePrc.start();
+
+    bool ret = tsMergePrc.waitForFinished();
+    QProcess::ExitStatus es = tsMergePrc.exitStatus();
+    int ec = tsMergePrc.exitCode();
+    return ret && es == QProcess::NormalExit && ec == 0;
+}
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
@@ -147,7 +166,11 @@ void MainWindow::on_tsUpdateBtn_clicked()
         on_tsLookBtn_clicked();
     }
 
-    re = m_pXmlWorker->ExportToTS(m_transList, ui->tsPathEdit->text());
+    QString curFile = ui->tsPathEdit->text();
+    re = m_pXmlWorker->ExportToTS(m_transList, curFile);
+
+    if (re)
+        re = LConvert({curFile}, curFile);  // lconvert -i f1 -o f1  整成qt工具的格式
 
     if(re) {
         onReceiveMsg("Update .ts file success");
@@ -216,7 +239,6 @@ void MainWindow::on_tsImportBtn_clicked()
     ImportFromTs(info, false);
 }
 
-#include <QProcess>
 bool MainWindow::ImportFromTs(const QFileInfo &impFi, bool merge)
 {
     if (!impFi.isFile() || "ts" != impFi.suffix()) {
@@ -229,14 +251,8 @@ bool MainWindow::ImportFromTs(const QFileInfo &impFi, bool merge)
     bool re = m_pXmlWorker->ImportFromTS(m_transList, impFi.filePath(), merge);
 
     if (merge) {
-        QProcess tsMergePrc;
-        tsMergePrc.setProgram(("lconvert.exe"));
         QString curFile = ui->tsPathEdit->text();
-        //合并ts文件，不能剔除新的非空翻译。即 lconvert -i f1 f2 -o f3, f3总是保留f2的翻译，即使f2的翻译为空
-        tsMergePrc.setArguments({"-i", impFi.filePath(), curFile, "-o", curFile});
-        tsMergePrc.start();
-        re = tsMergePrc.waitForFinished() && tsMergePrc.exitStatus() == QProcess::NormalExit && tsMergePrc.exitCode() == 0;
-
+        re = LConvert({impFi.filePath(), curFile}, curFile);
         if (re)
             on_tsSaveBtn_clicked();  //按照当前ts文件和m_translateMap更新ts文件
     }
@@ -262,7 +278,11 @@ void MainWindow::on_tsMergeFromOtherBtn_clicked()
 
 void MainWindow::on_tsSaveBtn_clicked()
 {
-    bool re = m_pXmlWorker->ExportToTS(m_transList, ui->tsPathEdit->text());
+    QString curFile = ui->tsPathEdit->text();
+    bool re = m_pXmlWorker->ExportToTS(m_transList, curFile);
+
+    if (re)
+        re = LConvert({curFile}, curFile);  // lconvert -i f1 -o f1  整成qt工具的格式
 
     if(re) {
         onReceiveMsg(tr("Update .ts file success"));
