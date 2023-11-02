@@ -59,7 +59,6 @@ private:
 
     QMap<QString, int>      m_tsColumnMap;
 
-    void BrowseExcelExePath();
     void runExcel(const QString &xlsxFile);
     void readConfig();
     void saveConfig();

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>575</width>
-    <height>510</height>
+    <height>472</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -176,27 +176,6 @@ color: #FF0000;
           <widget class="QPushButton" name="tsUpdateBtn">
            <property name="text">
             <string>译文写入(Excel to Ts)</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
-       <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_8">
-         <item>
-          <widget class="QLabel" name="label">
-           <property name="text">
-            <string>Excel 程序路径：</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QLineEdit" name="lineEdit_ExcelExePath">
-           <property name="text">
-            <string/>
-           </property>
-           <property name="placeholderText">
-            <string>如填写，则Excel生成后打开。路径如 C:/Program Files/Microsoft Office/Office15/EXCEL.EXE</string>
            </property>
           </widget>
          </item>

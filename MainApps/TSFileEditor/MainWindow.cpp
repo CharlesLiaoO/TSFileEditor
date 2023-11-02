@@ -447,8 +447,6 @@ void MainWindow::readConfig()
     QString configPath = QApplication::applicationDirPath();
     QSettings settings(configPath + "/config.ini", QSettings::IniFormat);
     settings.beginGroup("path");
-    ui->lineEdit_ExcelExePath->setText(settings.value("ExcelExePath").toString());
-
     ui->tsPathEdit->setText(settings.value("tsPath").toString());
     ui->tsDirEdit->setText(settings.value("tsDir").toString());
 
@@ -520,32 +518,23 @@ void MainWindow::on_pushButton_ExcelFileNameFollowTs_clicked()
     ui->excelPathEdit->setText(newExcelPath);
 }
 
-// 不支持excel的快捷方式去调用，所以不做浏览定位excel位置
-void MainWindow::BrowseExcelExePath()
+
+#ifdef Q_OS_WIN
+#include <Windows.h>
+#include <shellapi.h>
+bool ShellExecute(const QString &path, int showMode)
 {
-    QString configPath = QApplication::applicationDirPath();
-    QSettings settings(configPath + "/config.ini", QSettings::IniFormat);
-
-    QString excelPath = settings.value("path/ExcelExePath").toString();
-    if (excelPath.isEmpty())
-        excelPath = QStandardPaths::writableLocation(QStandardPaths::ApplicationsLocation);
-    excelPath = QFileDialog::getOpenFileName(this, tr("Select Excel Exe Path"), excelPath, "", nullptr,  QFileDialog::DontResolveSymlinks);
-    if (excelPath.isEmpty())
-        return;
-
-    settings.setValue("path/ExcelExePath", excelPath);
+    uint ret = (uint)ShellExecuteW(0, 0, (wchar_t *)path.utf16(), 0, 0, showMode);  //console app need to add 'win32: LIBS += -lshell32' in pro file
+    if (ret > 32) {  // ShellExecute return > 32 if ok
+        return true;
+    } else
+        return false;
 }
+#endif
 
 void MainWindow::runExcel(const QString &xlsxFile)
 {
-    QString excelPath = ui->lineEdit_ExcelExePath->text();
-    //if (excelPath.isEmpty() || !QFileInfo::exists(excelPath))
-        //return;
-
-    if (!QProcess::startDetached(excelPath, {xlsxFile}))  //不支持excel的快捷方式去调用，所以不做浏览定位excel位置
-        return;
-
-    QString configPath = QApplication::applicationDirPath();
-    QSettings settings(configPath + "/config.ini", QSettings::IniFormat);
-    settings.setValue("path/ExcelExePath", excelPath);
+#ifdef Q_OS_WIN
+    ShellExecute(xlsxFile, SW_MAXIMIZE);
+#endif
 }
